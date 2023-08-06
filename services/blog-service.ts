@@ -1,16 +1,26 @@
-import { BlogPost } from "../models/blogpost.ts";
+import { blogConfig } from "../blog-config.ts";
+import { BlogPost, TableName } from "../models/blogpost.ts";
 import { DataService } from "./data-service.ts";
 
 export class BlogService extends DataService<BlogPost> {
 
     constructor() {
-        super({isReadOnly: false});
+        super({isReadOnly: blogConfig.readOnly, tableName: TableName, model: BlogPost});
     }
 
-    // async getBlogPostBySlug (slug: string) {
-    //     const blogs = await this.queryAllAsync({slug: slug});
-    //     return blogs ? blogs[0] : null;
-    // }
+    public async getBlogPostBySlugAsync(slug: string) {
+        return await this.newQuery().where("slug", slug).first();
+    }
+
+    public async getBlogPostsOrderedByDateDesc(all?: boolean) {
+        const q = this.newQuery();
+        if(!all) {
+            q.where("isPublished", true);
+        } 
+        q.order("publishedAt", "DESC");
+        //. select("id", "slug", "title", "author", "publishedAt")
+        return await q.all();
+    }
 }
 
 export const blogService = new BlogService();

@@ -1,9 +1,10 @@
-import { Model, Primary, Column, BaseModel, DataType } from "cotton";
+import { Model, Column, DataType } from "cotton";
+import { BaseBlogModel } from "./models.ts";
 
-@Model("BlogPosts")
-export class BlogPost extends BaseModel {
-    @Primary()
-	id!: number;
+export const TableName = "BlogPosts";
+
+@Model(TableName)
+export class BlogPost extends BaseBlogModel {
 
     @Column({ type: DataType.String })
     slug!: string;

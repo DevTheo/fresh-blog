@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 import { connect, QueryBuilder, Manager } from "cotton";
+import { BaseBlogModel, allModels } from "../models/models.ts";
+import { BaseModel, ObjectType } from "https://deno.land/x/cotton@v0.7.5/src/basemodel.ts";
+import { BlogPost } from "../models/blogpost.ts";
+import { ModelQuery } from "https://deno.land/x/cotton@v0.7.5/src/modelquery.ts";
 
 export interface ICottonConnectionConfig {
-    database?: string;
-    username?: string;
-    port?: number;
-    hostname?: string;
-    password?: string;
-    applicationName?: string;
+    type: "mysql" | "postgres" | "sqlite"; 
+    models: ObjectType<BaseModel>[];
 }
 
 export type CottonDatabaseValues =
@@ -35,15 +35,11 @@ export interface ICottonDb {
     transaction(fn: () => Promise<void>): Promise<void>;
 }
 
-const connectionInfo = JSON.parse(Deno.readTextFileSync("../ormconfig.json")) as ICottonConnectionConfig;
+const connectionInfo = JSON.parse(Deno.readTextFileSync("../ormconfig.json"));
 
-export interface IDataService<T> {
-    // queryAllAsync(query?: Query): Promise<T[]>;
-    // getByIdAsync(query?: Query<T> | QueryFunction<T>): Promise<T | null>;
-    // createAsync(item: T): Promise<T | null>;
-    // updateAsync(item: T): Promise<T | null>;
-    // deleteByIdAsync(item: T): Promise<T | null>;
-    // saveAsync(item: T): Promise<T | null>;
+export interface IDataService<T extends BaseBlogModel> {
+    newQuery(): ModelQuery<T>;
+    getByIdAsync(id: number): Promise<T | null>;
     // countAsync(query?: Query): Promise<number>;
 }
 
@@ -54,24 +50,16 @@ export const DbTypes = {
 }
 
 export type DataServiceProps = {
-    // dbName: string,
-    // server?: string,
     isReadOnly: boolean,
-    //validator?: (entity:T) => Promise<boolean>, 
-    //getQueryForItem?: (item: T) => Query<T> | null,            
-    //getKeyForItem?: ((item: T) => any | null)
+    tableName: string,
+    model: ObjectType<BaseModel>
 }
 
-export class DataService<T> implements IDataService<T> {
-    //private db: Database<T>;
-    // getKeyForItem: (item: T) => any | null;
-    // getQueryForItem: (item: T) => any | null;
+export class DataService<T extends BaseBlogModel> implements IDataService<T> {
     private isReadOnly = false;
     public _db?: ICottonDb;
-
-    public getIsReadOnly() {
-        return this.isReadOnly;
-    }
+    private _tableName: string;
+    private _model: ObjectType<BaseModel>;
     
     private isReady = false;
     public getIsReady() {
@@ -80,77 +68,34 @@ export class DataService<T> implements IDataService<T> {
     private setIsReady(isReady: boolean) {
         this.isReady = isReady;
     }
-
-    //defaultGetQueryForItem = (item: T) => { return (item as any)?.id ? {id: (item as any)?.id} : null }
     
     constructor({
-        isReadOnly
-        //validator, 
-        //getQueryForItem,            
-        //getKeyForItem
+        isReadOnly,
+        tableName,
+        model
     } : DataServiceProps) {
         this.isReadOnly = isReadOnly;
-        connect(connectionInfo as any).then((db: any) =>{
+        this._tableName = tableName;
+        this._model = model;
+
+        const _connectionInfo = {...connectionInfo, models: allModels} as ICottonConnectionConfig;
+
+        connect(_connectionInfo).then((db: any) =>{
                 this._db = db as ICottonDb;
                 this.setIsReady(true);
             }).catch((err: any) =>{
-                console.log(`Cannot connect to ${connectionInfo.database}: `, err)
+                console.log(`Cannot connect to ${connectionInfo.database}: `, err);
+                throw err;
             });
-            
-        // this.getQueryForItem = getQueryForItem || this.defaultGetQueryForItem;
-        // this.getKeyForItem = getKeyForItem || this.defaultGetQueryForItem;
     }
-    // async queryAllAsync(query?: Query<T> | QueryFunction<T> | undefined): Promise<T[]> {
-    //     return await this.db.findMany(query);
-    // }
+    
+    public newQuery() {
+        return this._model.query() as ModelQuery<T>;
+    }
 
-    // async getByIdAsync(query?: Query<T> | QueryFunction<T>): Promise<T | null> {
-    //     return await this.db.findOne(query);
-    // }
-
-    // async createAsync(item: T): Promise<T | null> {
-    //     if(this.isReadOnly) {
-    //         return null;
-    //     }
-    //     item = { id: nanoid(), ...item} as T; // inject id
-
-    //     return await this.db.insertOne(item);
-    // }
-
-    // async updateAsync(item: T): Promise<T | null> {
-    //     if(this.isReadOnly) {
-    //         return null;
-    //     }
-        
-    //     const key = this.getKeyForItem(item);
-
-    //     return await this.db.updateOne(key, item)
-    // }
-
-    // async deleteByIdAsync(item: T): Promise<T | null> {
-    //     if(this.isReadOnly) {
-    //         return null;
-    //     }
-        
-    //     const query = this.getQueryForItem(item);
-    //     return !query ? null : await this.db.deleteOne(query!);
-    // }
-
-    // async saveAsync(item: T): Promise<T | null> {
-    //     if(this.isReadOnly) {
-    //         return null;
-    //     }
-        
-    //     const key = this.getKeyForItem(item);
-    //     let updated: T | null = null;
-    //     if(key) {
-    //         updated = await this.db.updateOne(key, item);
-    //     }
-    //     if(!updated) {
-    //         updated = await this.db.insertOne(item);
-    //     }
-    //     return updated!;
-    // }
+    public async getByIdAsync(id: number) {
+        return await this.newQuery().where("id", id).first();
+    }
     
     // async countAsync(query?: Query<T>|undefined): Promise<number> {
     //     return await this.db.count(query);
