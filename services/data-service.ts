@@ -83,6 +83,7 @@ export class DataService<T extends BaseBlogModel> implements IDataService<T> {
         connect(_connectionInfo).then((db: any) =>{
                 this._db = db as ICottonDb;
                 this.setIsReady(true);
+                
             }).catch((err: any) =>{
                 console.log(`Cannot connect to ${connectionInfo.database}: `, err);
                 throw err;

@@ -6,7 +6,7 @@ const blogSettings = {
 
 export class BlogConfig {
     //#region readOnly
-    private _readOnly = false;
+    private _readOnly = true;
     public get readOnly() : boolean {       
         return this._readOnly;
     }
