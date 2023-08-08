@@ -1,9 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
 import { connect, QueryBuilder, Manager } from "cotton";
-import { BaseBlogModel, allModels } from "../models/models.ts";
+import { allModels } from "../models/models.ts";
 import { BaseModel, ObjectType } from "https://deno.land/x/cotton@v0.7.5/src/basemodel.ts";
 import { BlogPost } from "../models/blogpost.ts";
 import { ModelQuery } from "https://deno.land/x/cotton@v0.7.5/src/modelquery.ts";
+import { BaseBlogModel } from "../models/base.ts";
 
 export interface ICottonConnectionConfig {
     type: "mysql" | "postgres" | "sqlite"; 
@@ -35,7 +36,7 @@ export interface ICottonDb {
     transaction(fn: () => Promise<void>): Promise<void>;
 }
 
-const connectionInfo = JSON.parse(Deno.readTextFileSync("../ormconfig.json"));
+const connectionInfo = JSON.parse(Deno.readTextFileSync("ormconfig.json"));
 
 export interface IDataService<T extends BaseBlogModel> {
     newQuery(): ModelQuery<T>;
@@ -78,7 +79,7 @@ export class DataService<T extends BaseBlogModel> implements IDataService<T> {
         this._tableName = tableName;
         this._model = model;
 
-        const _connectionInfo = {...connectionInfo, models: allModels} as ICottonConnectionConfig;
+        const _connectionInfo = {...connectionInfo, models: [model]} as ICottonConnectionConfig;
 
         connect(_connectionInfo).then((db: any) =>{
                 this._db = db as ICottonDb;

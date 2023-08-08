@@ -1,5 +1,5 @@
 import { Column, DataType, Model } from "cotton";
-import { BaseBlogModel } from "./models.ts";
+import { BaseBlogModel } from "./base.ts";
 
 export const TableName = "CmsItems";
 
@@ -11,4 +11,8 @@ export class CmsItem extends BaseBlogModel {
 
     @Column({ type: DataType.String })
     content!: string;
+
+    constructor() {
+        super();
+    }
 }

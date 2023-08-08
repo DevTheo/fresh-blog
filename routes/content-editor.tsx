@@ -4,6 +4,8 @@ import { blogConfig } from "../blog-config.ts";
 import { CkEditor } from "../islands/CkEditor.tsx";
 import { CmsItem } from "../models/cmsitem.ts";
 import { cmsService } from "../services/cms-service.ts";
+import { parseUrlVars } from "../utils/parse-utils.ts";
+import { redirectToAbsoluteOrRelative } from "../utils/handler-utils.ts";
 
 
 type PageData = {
@@ -11,6 +13,15 @@ type PageData = {
     content: string;
     message?: string;
     errorMessage?: string;
+    returnPage?: string;
+}
+
+export const loadUrlVars = (urlString: string) => {
+  const urlVars = parseUrlVars(urlString);
+  const name = urlVars.kvp["name"];
+  const returnPage = urlVars.keys.indexOf("returnPage") !== -1 ? urlVars.kvp["returnPage"] : undefined;
+
+  return { name, returnPage };
 }
 
 export const handler: Handlers<PageData> = {
@@ -21,8 +32,9 @@ export const handler: Handlers<PageData> = {
           });
         return response;
       }
-      const url = new URL(req.url);
-      const name = url.searchParams.get("name");
+
+      const {name, returnPage} = loadUrlVars(req.url);
+      
       if(!name) {
         const response = new Response("name is required", {
             status: 500
@@ -31,7 +43,7 @@ export const handler: Handlers<PageData> = {
       }
       const cmsEntry = await cmsService.getCmsItemByNameAsync(name);
 
-      return ctx.render({name, content: cmsEntry?.content ?? ""});
+      return ctx.render({name, returnPage, content: cmsEntry?.content ?? ""});
     },
     async POST(req, ctx) {
         if(blogConfig.readOnly) {
@@ -42,8 +54,7 @@ export const handler: Handlers<PageData> = {
         }
 
         const form = await req.formData();
-        const url = new URL(req.url);
-        const name = url.searchParams.get("name");
+        const {name, returnPage} = loadUrlVars(req.url);
 
         if(!name) {
             const response = new Response("name is required", {
@@ -60,6 +71,10 @@ export const handler: Handlers<PageData> = {
             
         cmsEntry.content = form.get("content")?.toString() || "";
         cmsEntry.save();
+
+        if(returnPage) {
+            return redirectToAbsoluteOrRelative(returnPage);
+        }
 
         return ctx.render({
             name, content: cmsEntry.content,

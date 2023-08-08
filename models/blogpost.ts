@@ -1,5 +1,5 @@
 import { Model, Column, DataType } from "cotton";
-import { BaseBlogModel } from "./models.ts";
+import { BaseBlogModel } from "./base.ts";
 
 export const TableName = "BlogPosts";
 
@@ -38,5 +38,9 @@ export class BlogPost extends BaseBlogModel {
     }
     setTags(value: string[])  {
         this.tags = value.join('|');
+    }
+
+    constructor() {
+        super();
     }
 }
