@@ -1,8 +1,11 @@
 
 const blogSettings = {
     author: "A Blogger",
-    blogTitle: "My Blog"
+    blogTitle: "My Blog",
+    themeName: "Keep It Simple"
 }
+
+
 
 export class BlogConfig {
     //#region readOnly
