@@ -1,11 +1,11 @@
+import { ThemeCtl, getThemes } from "./themes/theme-service.ts";
+
 
 const blogSettings = {
     author: "A Blogger",
     blogTitle: "My Blog",
-    themeName: "Keep It Simple"
+    themeName: "sbs-blog"
 }
-
-
 
 export class BlogConfig {
     //#region readOnly
@@ -29,6 +29,22 @@ export class BlogConfig {
     }
     //#endregion
 
+    //#region theme properties
+    private _theme: ThemeCtl | null = null;    
+    public get theme(): ThemeCtl  | null {
+        return this._theme;
+    }
+
+    public async loadTheme() {
+        if(this._theme === null) {
+            const themes = await getThemes();
+            const theme = themes.find(t => t.themeName === blogSettings.themeName);
+            this._theme = theme?.themeCtl ?? themes[0].themeCtl;
+        }
+
+        return this._theme;
+    }
+    //#endregion
 }
 
 export const blogConfig = new BlogConfig();

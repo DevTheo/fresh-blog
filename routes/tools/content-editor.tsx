@@ -1,11 +1,11 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { useSignal } from "@preact/signals";
-import { blogConfig } from "../blog-config.ts";
-import { CkEditor } from "../islands/CkEditor.tsx";
-import { CmsItem } from "../models/cmsitem.ts";
-import { cmsService } from "../services/cms-service.ts";
-import { parseUrlVars } from "../utils/parse-utils.ts";
-import { redirectToAbsoluteOrRelative } from "../utils/handler-utils.ts";
+import { blogConfig } from "../../blog-config.ts";
+import { CkEditor } from "../../islands/CkEditor.tsx";
+import { CmsItem } from "../../models/cmsitem.ts";
+import { cmsService } from "../../services/cms-service.ts";
+import { parseUrlVars } from "../../utils/parse-utils.ts";
+import { redirectToAbsoluteOrRelative } from "../../utils/handler-utils.ts";
 
 
 type PageData = {

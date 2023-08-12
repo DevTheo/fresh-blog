@@ -1,19 +1,20 @@
-import { ThemeCtl, ThemeScript, ThemeLink, ThemeHome, ThemeOtherPage } from "../theme-service.ts";
-import BlogPage from "./BlogPage.tsx";
-import HomePage from "./HomePage.tsx";
+import { ThemeCtl, ThemeHome, ThemeOtherPage } from "../theme-service.ts";
+import BlogPage from "./SbsCleanBlogPage.tsx";
+import HomePage from "./SbsCleanHomePage.tsx";
+import OtherPage from "./SbsCleanOtherPage.tsx";
+
+export const themeAssets = `/theme/sbs-clean/`;
 
 export default {
-    headScripts: [] as ThemeScript[],
-    cssScripts: [] as string[],
-    links: [] as ThemeLink[],
     homePage: {
-        RecentBlogEntryCount: 1,
+        RecentBlogEntryCount: 4,
         Component: HomePage
     } as ThemeHome,
     blogPage: {
         Component: BlogPage
     },
     otherPage: {
-
-    } as ThemeOtherPage
+        Component: OtherPage
+    } as ThemeOtherPage,
+    themeAssetFolder: themeAssets
 } as ThemeCtl;

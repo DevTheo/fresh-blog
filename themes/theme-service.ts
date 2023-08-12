@@ -1,8 +1,10 @@
-import { JSX } from "preact";
+import { FunctionComponent } from "preact";
 import { BlogPost } from "../models/blogpost.ts";
+import { BlogConfig } from "../blog-config.ts";
+import { CmsContentProps } from "../components/CmsContent.tsx";
 
 const themesDir = Deno.readDirSync("themes/");
-const themeNames = [];
+const themeNames = [] as string[];
 
 for await (const item of themesDir) {
     if(item.isDirectory) {
@@ -22,48 +24,61 @@ export type ThemeLink = {
 };
 
 export type ThemeHomeProps = {
-    blogSettings: string;
+    blogSettings: BlogConfig;
     blogEntries?: BlogPost[];
 }
 
+
+export type ThemeHeadProps = {
+    pageName: string;
+    description?: string;
+    blogSettings: BlogConfig;
+}
+
 export type ThemeBlogProps = {
-    blogSettings: string;
-    blogEntries?: BlogPost;
+    blogSettings: BlogConfig;
+    blogEntry: BlogPost | null;
 }
 
 export type ThemeOtherPageProps = {
+    blogSettings: BlogConfig;
     name: string;
-    cmsComponent: (name: string) => JSX.Element;
+    cmsComponent: FunctionComponent<CmsContentProps>;
 }
 
 export type ThemeHome = {
     RecentBlogEntryCount: number,
-    Component: (props: ThemeHomeProps) => JSX.Element
+    Component: FunctionComponent<ThemeHomeProps>
 };
 
-export type ThemeBlog = {
-    Component: (props: ThemeHomeProps) => JSX.Element
+export type ThemeBlogPage = {
+    Component: FunctionComponent<ThemeBlogProps>;
 };
 
 export type ThemeOtherPage = {
-    Component: (props: ThemeOtherPageProps) => JSX.Element    
+    Component: FunctionComponent<ThemeOtherPageProps>;
 }
 
 export type ThemeCtl = {
-    headScripts: ThemeScript[];
-    cssScripts: string[];
-    links: ThemeLink[];
+    themeAssetFolder: string;
     homePage: ThemeHome,
-    blogPage: ThemeBlog;
+    blogPage: ThemeBlogPage;
     otherPage?: ThemeOtherPage;
 }
 
-export const themes = themeNames.map(async (themeName) => {
-    const themeCtlName = `themes/${themeName}/theme.ts`;
-    const themeCtl: ThemeCtl = await import(themeCtlName);
-    return {
-        name: themeName,
-        themeCtl,
-        themeCtlName,
-    }
-});
+export type ThemeEntry = {
+    themeName: string;
+    themeCtl: ThemeCtl;
+}
+
+export const getThemes = async () => {
+    const promises = themeNames.map(async (themeName) => {
+        const themeCtlName = `./${themeName}/theme.ts`;
+        const themeCtl: ThemeCtl = (await import(themeCtlName) as any).default;
+        return {
+            themeName: themeName,
+            themeCtl: themeCtl
+        } as ThemeEntry;
+    })
+    return await Promise.all(promises);
+}
