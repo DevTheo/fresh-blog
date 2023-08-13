@@ -1,3 +1,4 @@
+import { BaseModel } from "cotton";
 import { blogConfig } from "../blog-config.ts";
 import { BlogPost, TableName } from "../models/blogpost.ts";
 import { DataService } from "./data-service.ts";
@@ -20,6 +21,10 @@ export class BlogService extends DataService<BlogPost> {
         q.order("publishedAt", "DESC");
         //. select("id", "slug", "title", "author", "publishedAt")
         return await q.all();
+    }
+    
+    public newQuery() {
+        return BlogPost.query();
     }
 }
 

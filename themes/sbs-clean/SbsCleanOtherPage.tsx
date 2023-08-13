@@ -4,7 +4,9 @@ import { SbsCleanContact } from "./SbsCleanContact.tsx";
 
 export default function OtherPage(props: ThemeOtherPageProps) {
     return (<>
-        {props.name.toLocaleLowerCase() !== "contact" ? 
-            (<SbsCleanAbout {...props} />) : (<SbsCleanContact {...props} />)}
+        {props.name.toLocaleLowerCase() === "about" ? 
+            (<SbsCleanAbout {...props} />) : 
+         props.name.toLocaleLowerCase() === "about" ? (<SbsCleanContact {...props} />) : 
+         (<></>)}
     </>)
 }

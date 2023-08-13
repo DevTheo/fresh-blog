@@ -13,6 +13,9 @@ export class BlogPost extends BaseBlogModel {
     title!: string;
 
     @Column({ type: DataType.String })
+    subTitle?: string;
+
+    @Column({ type: DataType.String })
     author!: string;
 
     @Column({ type: DataType.Boolean, default: false })
@@ -43,4 +46,8 @@ export class BlogPost extends BaseBlogModel {
     constructor() {
         super();
     }
+}
+
+export const isValid = (post: BlogPost): boolean => {
+    return true;
 }

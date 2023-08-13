@@ -13,6 +13,9 @@ export class CmsService extends DataService<CmsItem> {
         return result ? result as CmsItem : null;
     }
 
+    public newQuery() {
+        return CmsItem.query();
+    }
 }
 
 export const cmsService = new CmsService();

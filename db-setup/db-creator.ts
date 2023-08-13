@@ -14,8 +14,15 @@ async function migrate(db: DB) {
     scriptsToRun.sort();
     for(const script of scriptsToRun) {
         console.log(`Executing ${script}`)
-
-        db.execute(Deno.readTextFileSync(path.join(Deno.cwd(), "scripts", script)));
+        const sqlScript = Deno.readTextFileSync(path.join(Deno.cwd(), "scripts", script));
+        const allowError = sqlScript.startsWith("--allow-error"); 
+        try {
+            db.execute(sqlScript);
+        } catch(e) {
+            if(!allowError) {
+                throw e;
+            }
+        }
         db.execute(`INSERT INTO _migrations (name) VALUES ('${script}')`);
     }
     db.close();

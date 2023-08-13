@@ -1,4 +1,4 @@
-import { FunctionComponent } from "preact";
+import { ComponentProps, FunctionComponent, VNode } from "preact";
 import { BlogPost } from "../models/blogpost.ts";
 import { BlogConfig } from "../blog-config.ts";
 import { CmsContentProps } from "../components/CmsContent.tsx";
@@ -40,6 +40,11 @@ export type ThemeBlogProps = {
     blogEntry: BlogPost | null;
 }
 
+export type ThemeWrapperPageProps = {
+    blogSettings: BlogConfig;
+    name: string;
+} & ComponentProps<any>;
+
 export type ThemeOtherPageProps = {
     blogSettings: BlogConfig;
     name: string;
@@ -64,6 +69,7 @@ export type ThemeCtl = {
     homePage: ThemeHome,
     blogPage: ThemeBlogPage;
     otherPage?: ThemeOtherPage;
+    contentWrapper: FunctionComponent<ThemeWrapperPageProps>;
 }
 
 export type ThemeEntry = {

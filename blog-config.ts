@@ -4,7 +4,10 @@ import { ThemeCtl, getThemes } from "./themes/theme-service.ts";
 const blogSettings = {
     author: "A Blogger",
     blogTitle: "My Blog",
-    themeName: "sbs-blog"
+    themeName: "sbs-blog",
+    additionalScriptsToLoad: [
+        "https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"
+    ]
 }
 
 export class BlogConfig {
@@ -45,6 +48,13 @@ export class BlogConfig {
         return this._theme;
     }
     //#endregion
+
+    //#region theme properties
+    public get additionalScriptsToLoad() : string[] {
+        return blogSettings.additionalScriptsToLoad;
+    }
+    //#endregion
+
 }
 
 export const blogConfig = new BlogConfig();

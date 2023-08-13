@@ -10,9 +10,12 @@ import * as $4 from "./routes/greet/[name].tsx";
 import * as $5 from "./routes/index.tsx";
 import * as $6 from "./routes/pages/[name].tsx";
 import * as $7 from "./routes/posts/[slug].tsx";
-import * as $8 from "./routes/tools/content-editor.tsx";
-import * as $$0 from "./islands/CkEditor.tsx";
-import * as $$1 from "./islands/Counter.tsx";
+import * as $8 from "./routes/tools/admin.tsx";
+import * as $9 from "./routes/tools/blog-editor.tsx";
+import * as $10 from "./routes/tools/content-editor.tsx";
+import * as $$0 from "./islands/BlogEditor.tsx";
+import * as $$1 from "./islands/CkEditor.tsx";
+import * as $$2 from "./islands/Counter.tsx";
 
 const manifest = {
   routes: {
@@ -24,11 +27,14 @@ const manifest = {
     "./routes/index.tsx": $5,
     "./routes/pages/[name].tsx": $6,
     "./routes/posts/[slug].tsx": $7,
-    "./routes/tools/content-editor.tsx": $8,
+    "./routes/tools/admin.tsx": $8,
+    "./routes/tools/blog-editor.tsx": $9,
+    "./routes/tools/content-editor.tsx": $10,
   },
   islands: {
-    "./islands/CkEditor.tsx": $$0,
-    "./islands/Counter.tsx": $$1,
+    "./islands/BlogEditor.tsx": $$0,
+    "./islands/CkEditor.tsx": $$1,
+    "./islands/Counter.tsx": $$2,
   },
   baseUrl: import.meta.url,
 };

@@ -56,7 +56,7 @@ export type DataServiceProps = {
     model: ObjectType<BaseModel>
 }
 
-export class DataService<T extends BaseBlogModel> implements IDataService<T> {
+export abstract class DataService<T extends BaseBlogModel> implements IDataService<T> {
     private isReadOnly = false;
     public _db?: ICottonDb;
     private _tableName: string;
@@ -68,6 +68,11 @@ export class DataService<T extends BaseBlogModel> implements IDataService<T> {
     }
     private setIsReady(isReady: boolean) {
         this.isReady = isReady;
+    }
+
+    private _manager: Manager | null = null;
+    public get manager(): Manager | null {
+        return this._manager;
     }
     
     constructor({
@@ -83,6 +88,7 @@ export class DataService<T extends BaseBlogModel> implements IDataService<T> {
 
         connect(_connectionInfo).then((db: any) =>{
                 this._db = db as ICottonDb;
+                this._manager = db.getManager();
                 this.setIsReady(true);
                 
             }).catch((err: any) =>{
@@ -91,15 +97,11 @@ export class DataService<T extends BaseBlogModel> implements IDataService<T> {
             });
     }
     
-    public newQuery() {
-        return this._model.query() as ModelQuery<T>;
-    }
+    public abstract newQuery(): ModelQuery<T>;
 
     public async getByIdAsync(id: number) {
-        return await this.newQuery().where("id", id).first();
+        const q = this.newQuery();
+        console.log(q);
+        return await q.where("id", id).first();
     }
-    
-    // async countAsync(query?: Query<T>|undefined): Promise<number> {
-    //     return await this.db.count(query);
-    // }
 }
