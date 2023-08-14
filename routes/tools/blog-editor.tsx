@@ -37,7 +37,7 @@ export const handler: Handlers<PageData> = {
 
        let blogEntry: BlogPost | null = null;
        if(idValue === undefined) {
-          blogEntry = await blogService.getByIdAsync(idValue!);
+          blogEntry = blogService.getById(idValue!);
        }
        return ctx.render({id: idValue, blogEntry, message, errorMessage});
     },
@@ -72,7 +72,7 @@ export const handler: Handlers<PageData> = {
                 tags: savedBlogEntry.tags,
                 category: savedBlogEntry.category
             };
-            const result = await blogService.manager!.save([blogEntry]);
+            const result = [{id: 0}]; // await blogService.manager!.save([blogEntry]);
             blogEntry.id = result[0].id;
             return redirectToAbsoluteOrRelative(`/tools/blog-editor?id=${blogEntry.id}&message=saved`);
        }

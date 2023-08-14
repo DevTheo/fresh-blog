@@ -59,7 +59,7 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
         blogPost.value.snippet = snippet;
         blogPost.value.content = blogPostContent.value;
         blogPost.value.isPublished = true;
-        blogPost.value.publishedAt = new Date();
+        blogPost.value.publishedAt = (new Date()).toISOString();
  
         const result = await fetch(window.location.href, {
             body: JSON.stringify(blogPost.value),

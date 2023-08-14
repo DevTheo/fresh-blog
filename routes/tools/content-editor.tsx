@@ -42,7 +42,6 @@ export const handler: Handlers<PageData> = {
         return response;
       }
       const cmsEntry = await cmsService.getCmsItemByNameAsync(name);
-
       return ctx.render({name, returnPage, content: cmsEntry?.content ?? ""});
     },
     async POST(req, ctx) {
@@ -82,14 +81,17 @@ export const handler: Handlers<PageData> = {
         });
     }
   };
-  
+
+const theme = blogConfig.theme!;
+
 export default function Page({ data }: PageProps<PageData>) {
     const {name, content, message} = data;
     const htmltext = useSignal<string>(content);
+    console.log(name, content, message);
 
-    return (<>
+    return (<theme.contentWrapper blogSettings={blogConfig} name="cmsEditorPage">
         <div>{message}</div>
         <h1>{name}</h1>
         <CkEditor name="content" html={htmltext} showSave={true}/>
-    </>);
+    </theme.contentWrapper>);
 }
