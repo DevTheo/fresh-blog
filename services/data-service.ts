@@ -130,6 +130,10 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
         this._columnNames = columnNames;
     }
 
+    protected lastId(): number {
+        return this._db.lastInsertRowId;
+    }
+
     protected select() {
         return `SELECT ${this._columnNames.join(",")} from ${this._tableName} `;
     }
@@ -155,4 +159,10 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
         return null;
     }
 
+    public getAll() {
+        const query = this._db!.prepareQuery(this.select());
+        const rows = query.all();
+        console.log(rows)
+        return rows.map(i => this.rowToModel(i));
+    }
 }

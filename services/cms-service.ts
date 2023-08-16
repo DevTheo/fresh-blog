@@ -19,6 +19,33 @@ export class CmsService extends DataService<CmsItem> {
         return null;
 
     }
+    public async saveCmsItemAsync(item: CmsItem) {
+        if(item.id < 0) {
+            const unsaved = await this.getCmsItemByNameAsync(item.name);
+            if(unsaved) {
+                item.id = unsaved.id;
+            }
+        }        
+        if(item.id > 0) {
+            const sql = `UPDATE ${TableName} SET name=:name, content=:content where id =:id;`;
+            const query = this.prepareQuery(sql);
+            await query.execute({
+                id: item.id,
+                name: item.name,
+                content: item.content
+            });
+        } else {
+            const sql = `INSERT INTO ${TableName} (name, content) VALUES (:name, :content);`
+            const query = this.prepareQuery(sql);
+            await query.execute({
+                name: item.name,
+                content: item.content
+            });
+            item.id = this.lastId();
+        }
+        return item.id;
+    }
+
     protected rowToModel(row: Row): CmsItem {
         return CmsItemFromRow(row);
     }

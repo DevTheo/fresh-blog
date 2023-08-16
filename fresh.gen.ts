@@ -13,9 +13,11 @@ import * as $7 from "./routes/posts/[slug].tsx";
 import * as $8 from "./routes/tools/admin.tsx";
 import * as $9 from "./routes/tools/blog-editor.tsx";
 import * as $10 from "./routes/tools/content-editor.tsx";
-import * as $$0 from "./islands/BlogEditor.tsx";
-import * as $$1 from "./islands/CkEditor.tsx";
-import * as $$2 from "./islands/Counter.tsx";
+import * as $$0 from "./islands/AgGridView.jsx";
+import * as $$1 from "./islands/BlogEditor.tsx";
+import * as $$2 from "./islands/CkEditor.tsx";
+import * as $$3 from "./islands/CmsEditor.tsx";
+import * as $$4 from "./islands/Counter.tsx";
 
 const manifest = {
   routes: {
@@ -32,9 +34,11 @@ const manifest = {
     "./routes/tools/content-editor.tsx": $10,
   },
   islands: {
-    "./islands/BlogEditor.tsx": $$0,
-    "./islands/CkEditor.tsx": $$1,
-    "./islands/Counter.tsx": $$2,
+    "./islands/AgGridView.jsx": $$0,
+    "./islands/BlogEditor.tsx": $$1,
+    "./islands/CkEditor.tsx": $$2,
+    "./islands/CmsEditor.tsx": $$3,
+    "./islands/Counter.tsx": $$4,
   },
   baseUrl: import.meta.url,
 };

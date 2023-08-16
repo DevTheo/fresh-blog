@@ -1,20 +1,24 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { useSignal } from "@preact/signals";
 import { blogConfig } from "../../blog-config.ts";
-import { CkEditor } from "../../islands/CkEditor.tsx";
 import { CmsItem } from "../../models/cmsitem.ts";
 import { cmsService } from "../../services/cms-service.ts";
 import { parseUrlVars } from "../../utils/parse-utils.ts";
 import { redirectToAbsoluteOrRelative } from "../../utils/handler-utils.ts";
+import { CmsEditor } from "../../islands/CmsEditor.tsx";
+import { readAll, readerFromStreamReader} from "$std/streams/mod.ts";
 
 
 type PageData = {
+    id?: number;
     name: string;
     content: string;
     message?: string;
     errorMessage?: string;
     returnPage?: string;
 }
+
+const decoder = new TextDecoder();
 
 export const loadUrlVars = (urlString: string) => {
   const urlVars = parseUrlVars(urlString);
@@ -42,7 +46,7 @@ export const handler: Handlers<PageData> = {
         return response;
       }
       const cmsEntry = await cmsService.getCmsItemByNameAsync(name);
-      return ctx.render({name, returnPage, content: cmsEntry?.content ?? ""});
+      return ctx.render({id: cmsEntry?.id, name, returnPage, content: cmsEntry?.content ?? ""});
     },
     async POST(req, ctx) {
         if(blogConfig.readOnly) {
@@ -51,32 +55,27 @@ export const handler: Handlers<PageData> = {
               });
             return response;
         }
-
-        const form = await req.formData();
+        
+        const buffer = await readAll(readerFromStreamReader(req.body!.getReader()));
+        const data = JSON.parse(decoder.decode(buffer)) as {id?: number, name: string, content: string};
+        
         const {name, returnPage} = loadUrlVars(req.url);
 
-        if(!name) {
-            const response = new Response("name is required", {
-                status: 500
-              });
-            return response;
-          }
-    
-        let cmsEntry = await cmsService.getCmsItemByNameAsync(name);
-        if(!cmsEntry) {
-            cmsEntry = new CmsItem();
-            cmsEntry.name = name;
-        }
-            
-        cmsEntry.content = form.get("content")?.toString() || "";
-        cmsEntry.save();
+        const cmsEntry = new CmsItem();
+        cmsEntry.id = data.id || -1;
+        cmsEntry.name = data.name;
+        cmsEntry.content = data.content;
+
+        cmsEntry.id = await cmsService.saveCmsItemAsync(cmsEntry);
 
         if(returnPage) {
             return redirectToAbsoluteOrRelative(returnPage);
         }
 
         return ctx.render({
-            name, content: cmsEntry.content,
+            id: cmsEntry.id, 
+            name: cmsEntry.name, 
+            content: cmsEntry.content,
             message: "Content saved"
         });
     }
@@ -85,13 +84,13 @@ export const handler: Handlers<PageData> = {
 const theme = blogConfig.theme!;
 
 export default function Page({ data }: PageProps<PageData>) {
-    const {name, content, message} = data;
+    const {id, name, content, message, errorMessage} = data;
+    const editedName = useSignal<string>(name);
     const htmltext = useSignal<string>(content);
-    console.log(name, content, message);
-
+    
     return (<theme.contentWrapper blogSettings={blogConfig} name="cmsEditorPage">
         <div>{message}</div>
-        <h1>{name}</h1>
-        <CkEditor name="content" html={htmltext} showSave={true}/>
+        <div style={{color:"red"}}>{errorMessage}</div>
+        <CmsEditor id={id} name={editedName} content={htmltext} />
     </theme.contentWrapper>);
 }
