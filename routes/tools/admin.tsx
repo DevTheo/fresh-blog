@@ -31,7 +31,6 @@ export default function admin() {
     ];
 
     return(<theme.contentWrapper blogSettings={blogConfig} name="adminPage">
-        <script src="/script.js" />
         <h1>Admin</h1>
         <div>Blog entries <button>New</button></div>
         <AgGridView name="blogEntries" colDefs={blogColDefs} data={allBlogs} height={"200px"} width={"500px"} />
