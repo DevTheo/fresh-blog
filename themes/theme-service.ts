@@ -2,6 +2,7 @@ import { ComponentProps, FunctionComponent, VNode } from "preact";
 import { BlogPost } from "../models/blogpost.ts";
 import { BlogConfig } from "../blog-config.ts";
 import { CmsContentProps } from "../components/CmsContent.tsx";
+import { Signal } from "@preact/signals";
 
 const themesDir = Deno.readDirSync("themes/");
 const themeNames = [] as string[];

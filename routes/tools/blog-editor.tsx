@@ -62,13 +62,18 @@ export const handler: Handlers<PageData> = {
        if(isValid(savedBlogEntry))
        {
             const blogEntry = new BlogPost(savedBlogEntry);
-
+            blogEntry.id = blogEntry.id || id as any || 0;; 
             const result = blogService.saveBlogPost(blogEntry);
             blogEntry.id = result;
-            return redirectToAbsoluteOrRelative(`/tools/blog-editor?id=${blogEntry.id}&message=saved`);
+            return new Response("Saved", {
+                status: 200
+            });
        }
 
-       return redirectToAbsoluteOrRelative(`/tools/blog-editor?id=${id}&errorMessage=Cannot+Save`);
+       return new Response("Invalid Data", {
+            status: 500
+        });
+
     }
 }  
 

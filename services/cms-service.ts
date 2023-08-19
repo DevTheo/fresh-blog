@@ -12,9 +12,9 @@ export class CmsService extends DataService<CmsItem> {
     public getCmsItemByName(name: string) {
         const sql = `${this.selectStatement()} where name =?`;
         const query = this.prepareQuery(sql);        
-        const row = query.one([name]);
-        if(row) {
-            return this.rowToModel(row);
+        const rows = query.all([name]);
+        if((rows || []).length > 0) {
+            return this.rowToModel(rows[0]);
         } 
         return null;
 

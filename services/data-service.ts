@@ -150,6 +150,7 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
     public insertStatement(fieldList?: string[]) {
         fieldList = (fieldList || this._columnNames).filter(columnName => 
             columnName != "id");
+        console.log(fieldList);
         const qparms = fieldList.map(columnName => `:${columnName}`);
         
         return `INSERT INTO ${this._tableName} (${fieldList.join(",")}) values (${qparms.join(",")});`;

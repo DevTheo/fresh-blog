@@ -3,10 +3,12 @@ import { ThemeHomeProps } from "../theme-service.ts";
 import { HomeHead } from "./SbsCleanHead.tsx";
 import { SbsCleanNav } from "./SbsCleanNav.tsx";
 import theme, { themeAssets } from "./theme.ts";
+import { BlogPost } from "../../models/blogpost.ts";
 
 export default function HomePage(props: ThemeHomeProps) {
     const blogSettings = props.blogSettings;
-    const blogEntries = props.blogEntries || [];
+    //const blogEntries = props.blogEntries || [] as BlogPost[];
+    console.log("props.blogEntries", props.blogEntries);
 
     return (<>
         <HomeHead pageName="Home" blogSettings={blogSettings} />
@@ -29,22 +31,23 @@ export default function HomePage(props: ThemeHomeProps) {
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                    {blogEntries.map((blogEntry, i) => {
-                        {/*-- Post preview--*/}
+                    {(props?.blogEntries || []).map((blogEntry: BlogPost, i: number) => (
+                        <>{/*-- Post preview--*/}
                         <div class="post-preview">
                             <a href={`/posts/${blogEntry.slug}`}>
                                 <h2 class="post-title">{blogEntry.title}</h2>
-                                <h3 class="post-subtitle">{blogEntry.snippet}</h3>
+                                <h3 class="post-subtitle">{blogEntry.subTitle}</h3>
                             </a>
                             <p class="post-meta">
-                                Posted by
-                                <a href="/">{blogEntry.author || blogSettings.author}</a>
+                                {blogEntry.snippet}<br/>
+                                Posted by&nbsp;
+                                <a href="/">{blogEntry.author || blogSettings.author}</a>&nbsp;
                                 on {blogEntry.publishedAt ?? "??"}
                             </p>
                         </div>
                         {/*-- Divider--*/}
-                        <hr class="my-4" />
-                    }) }
+                        <hr class="my-4" /></>
+                    )) }
                         {/*-- Pager--*/}
                         <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
                     </div>

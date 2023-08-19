@@ -1,5 +1,5 @@
 import { blogConfig } from "../blog-config.ts";
-import { BlogPost, BlogPostColumnTypes, BlogPostColumnsNames, BlogPostFromRow, TableName } from "../models/blogpost.ts";
+import { BlogPost, BlogPostColumnsNames, BlogPostFromRow, TableName } from "../models/blogpost.ts";
 import { DataService } from "./data-service.ts";
 
 export class BlogService extends DataService<BlogPost> {
@@ -11,9 +11,9 @@ export class BlogService extends DataService<BlogPost> {
     public getBlogPostBySlug(slug: string) {
         const sql = `${this.selectStatement()} where slug =?`;
         const query = this.prepareQuery(sql);        
-        const row = query.one([slug]);
-        if(row) {
-            return this.rowToModel(row);
+        const rows = query.all([slug]);
+        if((rows || []).length > 0) {
+            return this.rowToModel(rows[0]);
         } 
         return null;
 
@@ -23,7 +23,6 @@ export class BlogService extends DataService<BlogPost> {
         const orderby = 'order by publishedAt desc';
         const where = all? '' :'where isPublished = 1 ';
         const sql = `${this.selectStatement(this._columnNames.filter(colName => colName !== "content"))} ${where}${orderby}`;
-        
         const query = this.prepareQuery(sql);        
         const rows = query.all([]);
         const result = [] as Array<BlogPost>;
@@ -49,9 +48,13 @@ export class BlogService extends DataService<BlogPost> {
             query.execute({
                 id: item.id,
                 slug: item.slug,
-                content: item.content,
+                title: item.title,
+                subTitle: item.subTitle,
+                author: item.author,
                 isPublished: item.isPublished,
                 publishedAt: item.publishedAt,
+                snippet: item.snippet,
+                content: item.content,
                 category: item.category,
                 tags: item.tags
             });
@@ -59,11 +62,14 @@ export class BlogService extends DataService<BlogPost> {
              console.log("inserting", item.slug);
              const query = this.prepareQuery(this.insertStatement());
              query.execute({
-                id: item.id,
                 slug: item.slug,
-                content: item.content,
+                title: item.title,
+                subTitle: item.subTitle,
+                author: item.author,
                 isPublished: item.isPublished,
                 publishedAt: item.publishedAt,
+                snippet: item.snippet,
+                content: item.content,
                 category: item.category,
                 tags: item.tags
               });
