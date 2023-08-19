@@ -8,20 +8,29 @@ export class BlogService extends DataService<BlogPost> {
         super({isReadOnly: blogConfig.readOnly, tableName: TableName, columnNames: BlogPostColumnsNames});
     }
 
-    public async getBlogPostBySlugAsync(slug: string) {
-        // return await this.newQuery().where("slug", slug).first();
+    public getBlogPostBySlug(slug: string) {
+        const sql = `${this.select()} where slug =?`;
+        const query = this.prepareQuery(sql);        
+        const row = query.one([slug]);
+        if(row) {
+            return this.rowToModel(row);
+        } 
         return null;
+
     }
 
-    public async getBlogPostsOrderedByDateDesc(all?: boolean) {
-        // const q = this.newQuery();
-        // if(!all) {
-        //     q.where("isPublished", true);
-        // } 
-        // q.order("publishedAt", "DESC");
-        // //. select("id", "slug", "title", "author", "publishedAt")
-        // return await q.all();
-        return null;
+    public getBlogPostsOrderedByDateDesc(all?: boolean) {
+        const orderby = 'order by publishedAt desc';
+        const where = all? '' :'where isPublished = 1 ';
+        const sql = `${this.select()} ${where}${orderby}`;
+        
+        const query = this.prepareQuery(sql);        
+        const rows = query.all([]);
+        const result = [] as Array<BlogPost>;
+        for(let i=0; i<rows.length; i++) {
+             result.push(this.rowToModel(rows[i]));
+        } 
+        return result;
     }
 
     protected rowToModel(row: Array<unknown>) {

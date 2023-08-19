@@ -32,9 +32,9 @@ export function CmsEditor({id, name, content}: CmsEditorProps) {
     }
 
     return (<>
-        <button onClick={(e) => saveData()}>Save</button>
+        <a href="/tools/admin">Return to Admin</a><br/>
+        <button onClick={(e) => saveData()}>Save</button><br/>
         <label>Name: <input name="name" value={name} onChange={handleOnChange}/></label>
-        <label>Content: </label>
         <CkEditor name="content" html={content} showSave={false}/>
     </>)
 }

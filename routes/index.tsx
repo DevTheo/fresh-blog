@@ -10,10 +10,9 @@ export default function Home(props: PageProps) {
   const [blogEntries, setBlogEntries] = useState([] as BlogPost[]);
   const firstIndex = Number(props.params.firstIndex ?? 0);
   useEffect(() => {
-    blogService.getBlogPostsOrderedByDateDesc().then((entries) => {
-      const lastIndex = Math.min(firstIndex + homePage.RecentBlogEntryCount, entries.length - 1);
-      setBlogEntries(entries.slice(firstIndex, lastIndex));
-    });
+    const entries = blogService.getBlogPostsOrderedByDateDesc()
+    const lastIndex = Math.min(firstIndex + homePage.RecentBlogEntryCount, entries.length - 1);
+    setBlogEntries(entries.slice(firstIndex, lastIndex));
   }, [firstIndex]);
   return (
     <>

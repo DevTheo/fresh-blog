@@ -11,9 +11,7 @@ export default function PostPage(props: PageProps) {
     const [blogEntry, setBlogEntry] = useState<BlogPost | null>(null);
     
     useEffect(() => {
-        blogService.getBlogPostBySlugAsync(slug).then((entry) => {
-            setBlogEntry(entry);
-        });
+        setBlogEntry(blogService.getBlogPostBySlug(slug));
     }, [slug]);
 
     return (<blogPage.Component blogSettings={blogConfig} blogEntry={blogEntry} />);

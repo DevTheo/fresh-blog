@@ -40,3 +40,6 @@ export function AboutHead(props: ThemeHeadProps) {
 export function ContactHead(props: ThemeHeadProps) {
     return (<CommonHeader {...props} />)
 }
+export function WrapperHead(props: ThemeHeadProps) {
+    return (<CommonHeader {...props} />)
+}

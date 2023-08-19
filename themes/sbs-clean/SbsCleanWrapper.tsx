@@ -1,11 +1,11 @@
 import { ThemeWrapperPageProps } from "../theme-service.ts";
-import { ContactHead } from "./SbsCleanHead.tsx";
+import { WrapperHead } from "./SbsCleanHead.tsx";
 import { SbsCleanNav } from "./SbsCleanNav.tsx";
 
 export function SbsCleanWrapper(props: ThemeWrapperPageProps) {
     
     return (<>
-        <ContactHead pageName="Contact" blogSettings={props.blogSettings} />
+        <WrapperHead pageName={props.name} blogSettings={props.blogSettings} />
         <div>
             <SbsCleanNav />
             {/*-- Page Header--*/}

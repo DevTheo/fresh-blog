@@ -78,15 +78,15 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
 
     return (
         <div>
-            <h1>Blog Editor</h1>
-            <button onClick={() => saveData()}>Save</button>
-            <label>Title: <input name="title" type="text" value={title} onChange={handleOnChange} /></label>
-            <label>SubTitle: <input name="subtitle" type="text" value={subtitle} onChange={handleOnChange} /></label>
-            <label>Author: <input name="author" type="text" value={author} onChange={handleOnChange} /></label>
-            <label>Slug (autogen'd): <input name="slug" type="text" value={slug} onChange={handleOnChange} /></label>
-            <label>Category: <input name="category" type="text" value={category} onChange={handleOnChange} /></label>
-            <label>tags (csv): <input name="tags" type="text" value={tags} onChange={handleOnChange} /></label>
-            <label>Snippet: <textarea name="snippet" rows={5} cols={60} onChange={handleOnChange}>{snippet}</textarea></label>
+            <a href="/tools/admin">Return to Admin</a><br/>
+            <button onClick={() => saveData()}>Save</button><br/>
+            <label>Title: <input name="title" type="text" value={title} onChange={handleOnChange} /></label><br/>
+            <label>SubTitle: <input name="subtitle" type="text" value={subtitle} onChange={handleOnChange} /></label><br/>
+            <label>Author: <input name="author" type="text" value={author} onChange={handleOnChange} /></label><br/>
+            <label>Slug (autogen'd): <input name="slug" type="text" value={slug} onChange={handleOnChange} /></label><br/>
+            <label>Category: <input name="category" type="text" value={category} onChange={handleOnChange} /></label><br/>
+            <label>tags (csv): <input name="tags" type="text" value={tags} onChange={handleOnChange} /></label><br/>
+            <label>Snippet: <textarea name="snippet" rows={5} cols={60} onChange={handleOnChange}>{snippet}</textarea></label><br/>
             <CkEditor name="blogPostContent" html={blogPostContent} showSave={false} />
         </div>
     );
