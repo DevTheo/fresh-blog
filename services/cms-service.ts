@@ -9,8 +9,8 @@ export class CmsService extends DataService<CmsItem> {
         super({isReadOnly: blogConfig.readOnly, tableName: TableName, columnNames: CmsItemColumnsNames});
     }
 
-    public async getCmsItemByNameAsync(name: string) {
-        const sql = `${this.select()} where name =?`;
+    public getCmsItemByName(name: string) {
+        const sql = `${this.selectStatement()} where name =?`;
         const query = this.prepareQuery(sql);        
         const row = query.one([name]);
         if(row) {
@@ -19,9 +19,9 @@ export class CmsService extends DataService<CmsItem> {
         return null;
 
     }
-    public async saveCmsItemAsync(item: CmsItem) {
-        if(item.id < 0) {
-            const unsaved = await this.getCmsItemByNameAsync(item.name);
+    public saveCmsItem(item: CmsItem) {
+        if(item.id <= 0) {
+            const unsaved = this.getCmsItemByName(item.name);
             if(unsaved) {
                 item.id = unsaved.id;
             }
@@ -29,7 +29,7 @@ export class CmsService extends DataService<CmsItem> {
         if(item.id > 0) {
             const sql = `UPDATE ${TableName} SET name=:name, content=:content where id =:id;`;
             const query = this.prepareQuery(sql);
-            await query.execute({
+            query.execute({
                 id: item.id,
                 name: item.name,
                 content: item.content
@@ -37,7 +37,7 @@ export class CmsService extends DataService<CmsItem> {
         } else {
             const sql = `INSERT INTO ${TableName} (name, content) VALUES (:name, :content);`
             const query = this.prepareQuery(sql);
-            await query.execute({
+           query.execute({
                 name: item.name,
                 content: item.content
             });

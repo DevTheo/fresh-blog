@@ -50,30 +50,21 @@ export const handler: Handlers<PageData> = {
        }
        const { id } = await loadUrlVars(req.url);
        if(!req.body) {
-            const response = new Response("Cannot edit content in live environmnent", {
+            const response = new Response("Cannot save empty value", {
                 status: 500
             });
             return response;
        }
        const buffer = await readAll(readerFromStreamReader(req.body!.getReader()));
        const savedBlogEntry = JSON.parse(decoder.decode(buffer)) as BlogPost;
+       console.log("savedBlogEntry", savedBlogEntry);
+
        if(isValid(savedBlogEntry))
        {
-            const blogEntry = {
-                id: savedBlogEntry.id,
-                slug: savedBlogEntry.slug,
-                title: savedBlogEntry.title,
-                subTitle: savedBlogEntry.subTitle,
-                author: savedBlogEntry.author,
-                isPublished: savedBlogEntry.isPublished,
-                publishedAt: savedBlogEntry.publishedAt,                
-                content: savedBlogEntry.content,
-                snippet: savedBlogEntry.snippet,
-                tags: savedBlogEntry.tags,
-                category: savedBlogEntry.category
-            };
-            const result = [{id: 0}]; // await blogService.manager!.save([blogEntry]);
-            blogEntry.id = result[0].id;
+            const blogEntry = new BlogPost(savedBlogEntry);
+
+            const result = blogService.saveBlogPost(blogEntry);
+            blogEntry.id = result;
             return redirectToAbsoluteOrRelative(`/tools/blog-editor?id=${blogEntry.id}&message=saved`);
        }
 

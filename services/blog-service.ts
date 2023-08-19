@@ -9,7 +9,7 @@ export class BlogService extends DataService<BlogPost> {
     }
 
     public getBlogPostBySlug(slug: string) {
-        const sql = `${this.select()} where slug =?`;
+        const sql = `${this.selectStatement()} where slug =?`;
         const query = this.prepareQuery(sql);        
         const row = query.one([slug]);
         if(row) {
@@ -22,7 +22,7 @@ export class BlogService extends DataService<BlogPost> {
     public getBlogPostsOrderedByDateDesc(all?: boolean) {
         const orderby = 'order by publishedAt desc';
         const where = all? '' :'where isPublished = 1 ';
-        const sql = `${this.select()} ${where}${orderby}`;
+        const sql = `${this.selectStatement(this._columnNames.filter(colName => colName !== "content"))} ${where}${orderby}`;
         
         const query = this.prepareQuery(sql);        
         const rows = query.all([]);
@@ -31,6 +31,46 @@ export class BlogService extends DataService<BlogPost> {
              result.push(this.rowToModel(rows[i]));
         } 
         return result;
+    }
+
+    public saveBlogPost(item: BlogPost) {
+        console.log(item);
+        if(item.id <= 0) {
+            const unsaved = this.getBlogPostBySlug(item.slug);
+            if(unsaved) {
+                console.log("found", unsaved.id);
+                item.id = unsaved.id;
+            }
+        }        
+        if(item.id > 0) {            
+            console.log("updating", item.slug);
+
+            const query = this.prepareQuery(this.updateStatement());
+            query.execute({
+                id: item.id,
+                slug: item.slug,
+                content: item.content,
+                isPublished: item.isPublished,
+                publishedAt: item.publishedAt,
+                category: item.category,
+                tags: item.tags
+            });
+        } else {
+             console.log("inserting", item.slug);
+             const query = this.prepareQuery(this.insertStatement());
+             query.execute({
+                id: item.id,
+                slug: item.slug,
+                content: item.content,
+                isPublished: item.isPublished,
+                publishedAt: item.publishedAt,
+                category: item.category,
+                tags: item.tags
+              });
+              item.id = this.lastId();
+        }
+        console.log("saved", item.id);
+        return item.id;
     }
 
     protected rowToModel(row: Array<unknown>) {

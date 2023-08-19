@@ -43,8 +43,21 @@ export class BlogPost extends BaseBlogModel {
         this.tags = value.join('|');
     }
 
-    constructor() {
+    constructor(row?: any) {
         super();
+        
+        this.id= row?.id;
+        this.slug= row?.slug;
+        this.title= row?.title;
+        this.subTitle= row?.subTitle;
+        this.author= row?.author;
+        this.isPublished= row?.isPublished;
+        this.publishedAt= row?.publishedAt;                
+        this.content= row?.content;
+        this.snippet= row?.snippet;
+        this.tags= row?.tags;
+        this.category= row?.category;
+        
     }
 }
 

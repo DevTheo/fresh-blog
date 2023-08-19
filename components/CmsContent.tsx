@@ -9,7 +9,7 @@ export function CmsContent({name}: CmsContentProps ) {
     const [content, setContent] = useState<string | null>(null);
 
     useEffect(() => {
-        cmsService.getCmsItemByNameAsync(name).then(cmsItem => setContent(cmsItem?.content ?? null));
+        cmsService.getCmsItemByName(name).then(cmsItem => setContent(cmsItem?.content ?? null));
     }, [name]);
     
     return (<>

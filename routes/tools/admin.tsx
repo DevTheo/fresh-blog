@@ -17,8 +17,8 @@ export default function admin() {
         <h1>Admin</h1>
         <div>Blog entries <a href="/tools/blog-editor?id=-1" className="btn btn-outline-primary btn-sm">New</a></div>
         <AgGridBlog data={allBlogs} />
-        <div>Cms Items {/*
-            <a href="/tools/content-editor?name=+" className="btn btn-outline-primary btn-sm">New</a> */}</div>
+        <div>Cms Items {
+            <a href="/tools/content-editor?name=+new+" className="btn btn-outline-primary btn-sm">New</a>}</div>
         <AgGridCms data={allCms} />
     </theme.contentWrapper>)
 }

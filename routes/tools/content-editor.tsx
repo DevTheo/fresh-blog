@@ -29,7 +29,7 @@ export const loadUrlVars = (urlString: string) => {
 }
 
 export const handler: Handlers<PageData> = {
-    async GET(req, ctx) {
+    GET(req, ctx) {
       if(blogConfig.readOnly) {
         const response = new Response("Cannot edit content in live environmnent", {
             status: 500
@@ -45,7 +45,16 @@ export const handler: Handlers<PageData> = {
           });
         return response;
       }
-      const cmsEntry = await cmsService.getCmsItemByNameAsync(name);
+      let cmsEntry: CmsItem | null;
+      if(name !== " new ") {
+        cmsEntry = cmsService.getCmsItemByName(name);
+      } else {
+        cmsEntry = new CmsItem();
+        cmsEntry.name = "";
+        cmsEntry.content = "";
+        cmsEntry.id = -1;
+      }
+
       return ctx.render({id: cmsEntry?.id, name, returnPage, content: cmsEntry?.content ?? ""});
     },
     async POST(req, ctx) {
@@ -66,7 +75,7 @@ export const handler: Handlers<PageData> = {
         cmsEntry.name = data.name;
         cmsEntry.content = data.content;
 
-        cmsEntry.id = await cmsService.saveCmsItemAsync(cmsEntry);
+        cmsEntry.id = cmsService.saveCmsItem(cmsEntry);
 
         if(returnPage) {
             return redirectToAbsoluteOrRelative(returnPage);

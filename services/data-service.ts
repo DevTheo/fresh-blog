@@ -115,7 +115,7 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
     private setIsReady(isReady: boolean) {
         this.isReady = isReady;
     }
-    private _columnNames: string[];
+    protected _columnNames: string[];
     constructor({
         isReadOnly,
         tableName,
@@ -134,8 +134,25 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
         return this._db.lastInsertRowId;
     }
 
-    protected select() {
+    public selectStatement(fieldList?: string[]) {
+        fieldList = fieldList || this._columnNames;
         return `SELECT ${this._columnNames.join(",")} from ${this._tableName} `;
+    }
+
+    public updateStatement(fieldList?: string[]) {
+        fieldList = fieldList || this._columnNames;
+        const setSection = fieldList.filter(columnName => 
+                columnName != "id").map(
+            (columnName) => `${columnName} = :${columnName}`)
+        return `UPDATE ${this._tableName} SET ${setSection.join(",")} where id = :id`;
+    }
+
+    public insertStatement(fieldList?: string[]) {
+        fieldList = (fieldList || this._columnNames).filter(columnName => 
+            columnName != "id");
+        const qparms = fieldList.map(columnName => `:${columnName}`);
+        
+        return `INSERT INTO ${this._tableName} (${fieldList.join(",")}) values (${qparms.join(",")});`;
     }
 
     protected prepareQuery(sql: string) {
@@ -160,9 +177,8 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
     }
 
     public getAll() {
-        const query = this._db!.prepareQuery(this.select());
+        const query = this._db!.prepareQuery(this.selectStatement());
         const rows = query.all();
-        console.log(rows)
         return rows.map(i => this.rowToModel(i));
     }
 }
