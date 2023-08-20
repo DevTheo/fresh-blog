@@ -7,8 +7,6 @@ import { BlogPost } from "../../models/blogpost.ts";
 
 export default function HomePage(props: ThemeHomeProps) {
     const blogSettings = props.blogSettings;
-    //const blogEntries = props.blogEntries || [] as BlogPost[];
-    console.log("props.blogEntries", props.blogEntries);
 
     return (<>
         <HomeHead pageName="Home" blogSettings={blogSettings} />
@@ -49,7 +47,9 @@ export default function HomePage(props: ThemeHomeProps) {
                         <hr class="my-4" /></>
                     )) }
                         {/*-- Pager--*/}
-                        <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <a className={`btn btn-primary text-uppercase${!props.prevPageDisabled ? "" : " disabled"}`} href={props.prevPage}>&#x2190; Newer Posts</a>
+                            <a className={`btn btn-primary text-uppercase${!props.nextPageDisabled ? "" : " disabled"}`} href={props.nextPage}>Older Posts →</a></div>
                     </div>
                 </div>
             </div>

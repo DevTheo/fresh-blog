@@ -27,6 +27,10 @@ export type ThemeLink = {
 export type ThemeHomeProps = {
     blogSettings: BlogConfig;
     blogEntries?: BlogPost[];
+    nextPage: string;
+    nextPageDisabled: boolean;
+    prevPage: string;
+    prevPageDisabled: boolean;
 }
 
 
