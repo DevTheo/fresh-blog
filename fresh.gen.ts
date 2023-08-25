@@ -4,15 +4,16 @@
 
 import * as $0 from "./routes/_404.tsx";
 import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/api/blog.ts";
-import * as $3 from "./routes/api/joke.ts";
-import * as $4 from "./routes/greet/[name].tsx";
-import * as $5 from "./routes/index.tsx";
-import * as $6 from "./routes/pages/[name].tsx";
-import * as $7 from "./routes/posts/[slug].tsx";
-import * as $8 from "./routes/tools/admin.tsx";
-import * as $9 from "./routes/tools/blog-editor.tsx";
-import * as $10 from "./routes/tools/content-editor.tsx";
+import * as $2 from "./routes/admin/_layout.tsx";
+import * as $3 from "./routes/admin/blog-editor.tsx";
+import * as $4 from "./routes/admin/content-editor.tsx";
+import * as $5 from "./routes/admin/index.tsx";
+import * as $6 from "./routes/api/blog.ts";
+import * as $7 from "./routes/api/joke.ts";
+import * as $8 from "./routes/greet/[name].tsx";
+import * as $9 from "./routes/index.tsx";
+import * as $10 from "./routes/pages/[name].tsx";
+import * as $11 from "./routes/posts/[slug].tsx";
 import * as $$0 from "./islands/AgGridBlog.tsx";
 import * as $$1 from "./islands/AgGridCms.tsx";
 import * as $$2 from "./islands/AgGridView.jsx";
@@ -25,15 +26,16 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $0,
     "./routes/_app.tsx": $1,
-    "./routes/api/blog.ts": $2,
-    "./routes/api/joke.ts": $3,
-    "./routes/greet/[name].tsx": $4,
-    "./routes/index.tsx": $5,
-    "./routes/pages/[name].tsx": $6,
-    "./routes/posts/[slug].tsx": $7,
-    "./routes/tools/admin.tsx": $8,
-    "./routes/tools/blog-editor.tsx": $9,
-    "./routes/tools/content-editor.tsx": $10,
+    "./routes/admin/_layout.tsx": $2,
+    "./routes/admin/blog-editor.tsx": $3,
+    "./routes/admin/content-editor.tsx": $4,
+    "./routes/admin/index.tsx": $5,
+    "./routes/api/blog.ts": $6,
+    "./routes/api/joke.ts": $7,
+    "./routes/greet/[name].tsx": $8,
+    "./routes/index.tsx": $9,
+    "./routes/pages/[name].tsx": $10,
+    "./routes/posts/[slug].tsx": $11,
   },
   islands: {
     "./islands/AgGridBlog.tsx": $$0,

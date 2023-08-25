@@ -76,19 +76,44 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
         }
     }
 
-    return (
-        <div>
-            <a href="/tools/admin">Return to Admin</a><br/>
-            <button onClick={() => saveData()}>Save</button><br/>
-            <label>Title: <input name="title" type="text" value={title} onChange={handleOnChange} /></label><br/>
-            <label>SubTitle: <input name="subtitle" type="text" value={subtitle} onChange={handleOnChange} /></label><br/>
-            <label>Author: <input name="author" type="text" value={author} onChange={handleOnChange} /></label><br/>
-            <label>Slug (autogen'd): <input name="slug" type="text" value={slug} onChange={handleOnChange} /></label><br/>
-            <label>Category: <input name="category" type="text" value={category} onChange={handleOnChange} /></label><br/>
-            <label>tags (csv): <input name="tags" type="text" value={tags} onChange={handleOnChange} /></label><br/>
-            <label>Snippet: <textarea name="snippet" rows={5} cols={60} onChange={handleOnChange}>{snippet}</textarea></label><br/>
+    return (<>
+        <div class="row g-1">
+            <div class="col col-sm-4">&nbsp;</div>
+            <div class="col"><button onClick={() => saveData()}>Save</button></div>
+        </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>Title:</strong></div>
+            <div class="col"><input name="title" type="text" value={title} onChange={handleOnChange} /></div>
+        </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>SubTitle:</strong></div>
+            <div class="col"><input name="subtitle" type="text" value={subtitle} onChange={handleOnChange} /> </div>
+            </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>Author:</strong></div>
+            <div class="col col-sm-2"><input name="author" type="text" value={author} onChange={handleOnChange} /> </div>
+            </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>Slug (autogen'd):</strong></div>
+            <div class="col"><input name="slug" type="text" value={slug} onChange={handleOnChange} /> </div>
+            </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>Category:</strong></div>
+            <div class="col"><input name="category" type="text" value={category} onChange={handleOnChange} /> </div>
+            </div>
+        <div class="row g-1">
+            <div class="col col-sm-2"><strong>tags (csv):</strong></div>
+            <div class="col"><input name="tags" type="text" value={tags} onChange={handleOnChange} /> </div>
+            </div>
+        <div class="row g-1">
+            <div class="col"><strong>Snippet:</strong></div>
+        </div>
+        <div class="row g-1">
+            <div class="col"><textarea name="snippet" rows={5} cols={60} onChange={handleOnChange}>{snippet}</textarea></div>
+        </div>
+        <div class="row g-1">
             <CkEditor name="blogPostContent" html={blogPostContent} showSave={false} />
         </div>
-    );
+    </>);
 }
 

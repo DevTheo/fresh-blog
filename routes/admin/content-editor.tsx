@@ -97,9 +97,9 @@ export default function Page({ data }: PageProps<PageData>) {
     const editedName = useSignal<string>(name);
     const htmltext = useSignal<string>(content);
     
-    return (<theme.contentWrapper blogSettings={blogConfig} name="cmsEditorPage">
+    return (<>
         <div>{message}</div>
         <div style={{color:"red"}}>{errorMessage}</div>
         <CmsEditor id={id} name={editedName} content={htmltext} />
-    </theme.contentWrapper>);
+    </>);
 }

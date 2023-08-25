@@ -1,4 +1,3 @@
-import { CkEditorEditorTypes, getCkEditorBaseScript } from "./islands/CkEditor.tsx";
 import { ThemeCtl, getThemes } from "./themes/theme-service.ts";
 
 
@@ -7,8 +6,6 @@ const blogSettings = {
     blogTitle: "My Blog",
     themeName: "sbs-blog",
     additionalScriptsToLoad: [
-        getCkEditorBaseScript(CkEditorEditorTypes.Superbuild),
-        "https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"
     ]
 }
 

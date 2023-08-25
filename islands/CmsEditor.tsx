@@ -32,9 +32,16 @@ export function CmsEditor({id, name, content}: CmsEditorProps) {
     }
 
     return (<>
-        <a href="/tools/admin">Return to Admin</a><br/>
-        <button onClick={(e) => saveData()}>Save</button><br/>
-        <label>Name: <input name="name" value={name} onChange={handleOnChange}/></label>
-        <CkEditor name="content" html={content} showSave={false}/>
+        <div class="row g-1">
+            <div class="col col-sm-6">&nbsp;</div>
+            <div class="col"><button onClick={(e) => saveData()}>Save</button></div>
+        </div>
+        <div class="row g-1">
+            <div class="col col-sm-2">Name: </div>
+            <div class="col"><input name="name" value={name} onChange={handleOnChange}/></div>
+        </div>
+        <div class="row g-1">
+            <CkEditor name="content" html={content} showSave={false}/>
+        </div>
     </>)
 }

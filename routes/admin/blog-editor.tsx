@@ -77,8 +77,6 @@ export const handler: Handlers<PageData> = {
     }
 }  
 
-const theme = blogConfig.theme!;
-
 export default function Page({ data }: PageProps<PageData>) {
     const { id, blogEntry, message, errorMessage } = data;
     
@@ -86,8 +84,7 @@ export default function Page({ data }: PageProps<PageData>) {
     const blogPostContent = useSignal<string>(blogEntry?.content || "");
 
     // TODO: Add the blog-editor here
-    return (
-        <theme.contentWrapper blogSettings={blogConfig} name="blogEditorPage">
+    return (<>
             <BlogEditor 
                 blogPost={blogPost} 
                 blogPostContent={blogPostContent} 
@@ -95,5 +92,5 @@ export default function Page({ data }: PageProps<PageData>) {
                 message={message || ""}
                 errorMessage={errorMessage || ""}
                 />
-        </theme.contentWrapper>); 
+        </>); 
 }

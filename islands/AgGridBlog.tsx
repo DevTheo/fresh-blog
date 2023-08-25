@@ -9,7 +9,7 @@ export type AgGridBlogProps = {
 export function AgGridBlog({data}: AgGridBlogProps) {
 
     const blogColDefs = [
-        { field: "id", cellRenderer: LinkActionCellRenderer, cellRendererParams: { text: "Edit", getLink: (value: string, data: any) => `/tools/blog-editor?id=${value}` } },
+        { field: "id", cellRenderer: LinkActionCellRenderer, cellRendererParams: { text: "Edit", getLink: (value: string, data: any) => `/admin/blog-editor?id=${value}` } },
         { field: "slug", cellDataType: 'text' },
         { field: "title", cellDataType: 'text'  },
         { field: "subTitle", cellDataType: 'text'  },

@@ -9,7 +9,7 @@ export type AgGridCmsProps = {
 export function AgGridCms({data}: AgGridCmsProps) {
 
     const cmsColDefs = [
-        { field: "name", cellRenderer: LinkActionCellRenderer, cellRendererParams: { text: "Edit", getLink: (value: string, data: any) => `/tools/content-editor?name=${value}` } },
+        { field: "name", cellRenderer: LinkActionCellRenderer, cellRendererParams: { text: "Edit", getLink: (value: string, data: any) => `/admin/content-editor?name=${value}` } },
         { field: "name", cellDataType: 'text'  },
         { field: "content", cellDataType: 'text'  },
     ];
