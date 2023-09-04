@@ -1,6 +1,7 @@
 import { ThemeBlogProps } from "../theme-service.ts";
 import { PostHead } from "./SbsCleanHead.tsx";
 import { SbsCleanNav } from "./SbsCleanNav.tsx";
+import { themeAssets } from "./theme.ts";
 
 export default function BlogPage(props: ThemeBlogProps) {
     const blogPost = props.blogEntry;
@@ -11,7 +12,7 @@ export default function BlogPage(props: ThemeBlogProps) {
         <div>
             <SbsCleanNav />
             {/*-- Page Header--*/}
-            <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <header class="masthead" style={`background-image: url('${themeAssets}assets/img/post-bg.jpg')`}>
                 <div class="container position-relative px-4 px-lg-5">
                     <div class="row gx-4 gx-lg-5 justify-content-center">
                         <div class="col-md-10 col-lg-8 col-xl-7">
