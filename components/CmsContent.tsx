@@ -1,22 +1,21 @@
-import { useEffect, useState } from "preact/hooks";
 import { cmsService } from "../services/cms-service.ts";
 import { blogConfig } from "../blog-config.ts";
-import { CmsItem } from "../models/cmsitem.ts";
+import { useMemo } from "preact/hooks";
 
 export type CmsContentProps = {
     name: string;
 }
 
 export function CmsContent({name}: CmsContentProps ) {
-    const [content, setContent] = useState<string | null>(null);
+    //const [content, setContent] = useState<string | null>(null);
 
-    useEffect(() => {
+    const content = useMemo(() => {
         const cmsItem= cmsService.getCmsItemByName(name);
-        setContent(cmsItem?.content ?? null);
+        return cmsItem?.content ?? null;
     }, [name]);
     
     return (<>
-        { (!blogConfig.readOnly && !content) && (<div>[name] missing <a href={`/tools/content-editor?name=${name}`}></a></div>) }
+        { (!blogConfig.readOnly && !content) && (<div><a href={`/admin/content-editor?name=${name}`}>[{name}] missing</a></div>) }
         <div dangerouslySetInnerHTML={{ __html: (content || "") }}></div>
     </>)
 }

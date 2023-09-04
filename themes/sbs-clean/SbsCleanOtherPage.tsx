@@ -6,7 +6,7 @@ export default function OtherPage(props: ThemeOtherPageProps) {
     return (<>
         {props.name.toLocaleLowerCase() === "about" ? 
             (<SbsCleanAbout {...props} />) : 
-         props.name.toLocaleLowerCase() === "about" ? (<SbsCleanContact {...props} />) : 
+         props.name.toLocaleLowerCase() === "contact" ? (<SbsCleanContact {...props} />) : 
          (<></>)}
     </>)
 }

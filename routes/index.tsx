@@ -19,7 +19,6 @@ export default function Home(props: PageProps) {
   
   const nextPage = nextPageDisabled ? `/?index=${pageIndex}` : `/?index=${pageIndex+1}`;
   const prevPage = prevPageDisabled ? `/?index=${pageIndex}` : `/?index=${pageIndex-1}`
-  console.log(pageIndex, startIndex, lastIndex, allEntries.length, prevPageDisabled, nextPageDisabled, nextPage);
   
   return (
     <>
