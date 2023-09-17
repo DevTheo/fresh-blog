@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { BaseBlogModel } from "../models/base.ts";
-import {DB} from "sqlite";
+import {DB, SqliteOptions} from "sqlite";
 //import * as Path from "$std/path/mod.ts";
 
 // export interface ICottonConnectionConfig {
@@ -124,7 +124,9 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
         this.isReadOnly = isReadOnly;
         this._tableName = tableName;
 
-        this._db = new DB(connectionInfo.database);
+        this._db = isReadOnly ?  
+            new DB(connectionInfo.database):
+            new DB(connectionInfo.database, {mode: "read"});
 
         this.setIsReady(true);
         this._columnNames = columnNames;
