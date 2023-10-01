@@ -34,11 +34,12 @@ export const handler: Handlers<PageData> = {
        }
        const { id, message, errorMessage } = await loadUrlVars(req.url);
        const idValue = id ? parseInt(id, 10) : undefined;
-
+       
        let blogEntry: BlogPost | null = null;
-       if(idValue === undefined) {
-          blogEntry = blogService.getById(idValue!);
-       }
+       if(idValue !== undefined) {
+            blogEntry = blogService.getById(idValue!);
+            console.log(blogEntry);
+        }
        return ctx.render({id: idValue, blogEntry, message, errorMessage});
     },
     async POST(req, ctx) {
@@ -73,6 +74,30 @@ export const handler: Handlers<PageData> = {
        return new Response("Invalid Data", {
             status: 500
         });
+
+    },
+    async DELETE(req, ctx) {
+        if(blogConfig.readOnly) {
+            const response = new Response("Cannot edit content in live environmnent", {
+                status: 500
+            });
+            return response;
+       }
+       const { id, message, errorMessage } = await loadUrlVars(req.url);
+       const idValue = id ? parseInt(id, 10) : undefined;
+       
+       if(idValue !== undefined && !isNaN(idValue) && idValue >= 0) {
+            const result = blogService.delete(idValue);
+            if(!result) {
+                const response = new Response("unable to delete", {
+                    status: 400
+                });        
+            }
+        }
+        const response = new Response("true", {
+            status: 200
+        });
+        return response;
 
     }
 }  

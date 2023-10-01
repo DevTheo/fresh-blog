@@ -49,6 +49,22 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
         }
     }
 
+    const deleteData = async () => {
+        const result = await fetch(window.location.href, {
+            method: "delete",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if(result.status === 200) {
+            alert("Deleted");
+        } else {
+            console.error(result);
+            alert("Failed to delete");
+        }
+        window.location.href = "/admin";
+    }
+
     const saveData = async () => {
         blogPost.value.author = author;
         blogPost.value.title = title;
@@ -79,7 +95,10 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
     return (<>
         <div class="row g-1">
             <div class="col col-sm-4">&nbsp;</div>
-            <div class="col"><button onClick={() => saveData()}>Save</button></div>
+            <div class="col">
+                <button onClick={() => saveData()}>Save</button>
+                <button onClick={() => { if(window.confirm("Are you sure you want to delete this post?")) deleteData()} }>Delete</button>
+            </div>
         </div>
         <div class="row g-1">
             <div class="col col-sm-2"><strong>Title:</strong></div>
@@ -113,6 +132,10 @@ export function BlogEditor({blogPost, blogPostContent,defaultAuthor, message, er
         </div>
         <div class="row g-1">
             <CkEditor name="blogPostContent" html={blogPostContent} showSave={false} />
+        </div>
+        <div class="row g-1">
+            <div class="col col-sm-4">&nbsp;</div>
+            <div class="col"><button onClick={() => saveData()}>Save</button></div>
         </div>
     </>);
 }

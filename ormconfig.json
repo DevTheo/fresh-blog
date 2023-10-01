@@ -1,4 +1,4 @@
 {
-    "type": "sqlite",
-    "database": "./data/site.db"
+    "type": "initiallydb",
+    "database": "./data/site"
 }

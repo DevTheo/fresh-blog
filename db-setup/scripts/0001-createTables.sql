@@ -1,4 +1,0 @@
-CREATE TABLE if not exists CmsItems (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, content BLOB NOT NULL);
-
-CREATE TABLE if not exists BlogPosts (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, title TEXT NOT NULL, author TEXT NOT NULL, isPublished INTEGER NOT NULL, publishedAt TEXT NULL, content BLOB NOT NULL, snippet TEXT NOT NULL, category TEXT NULL, tags TEXT NULL);
-

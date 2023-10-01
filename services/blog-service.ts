@@ -1,6 +1,7 @@
 import { blogConfig } from "../blog-config.ts";
-import { BlogPost, BlogPostColumnsNames, BlogPostFromRow, TableName } from "../models/blogpost.ts";
-import { DataService } from "./data-service.ts";
+import { BlogPost, BlogPostColumnsNames, TableName } from "../models/blogpost.ts";
+import { DataService, stringSortDesc } from "./data-service.ts";
+import { ILocallyDbDocument } from "./locallydb-types.ts";
 
 export class BlogService extends DataService<BlogPost> {
 
@@ -8,82 +9,43 @@ export class BlogService extends DataService<BlogPost> {
         super({isReadOnly: blogConfig.readOnly, tableName: TableName, columnNames: BlogPostColumnsNames});
     }
 
-    public getBlogPostBySlug(slug: string) {
-        const sql = `${this.selectStatement()} where slug =?`;
-        const query = this.prepareQuery(sql);        
-        const rows = query.all([slug]);
-        if((rows || []).length > 0) {
-            return this.rowToModel(rows[0]);
-        } 
-        return null;
+    public RowToEntity(i: any) { return new BlogPost(i); }
 
+    public getBlogPostBySlug(slug: string) {
+        const arr = this._collection.where({slug}).items;
+        return (arr?.length || 0) > 0 ? new BlogPost(arr[0]) : null;
     }
 
     public getBlogPostsOrderedByDateDesc(all?: boolean) {
-        const orderby = 'order by publishedAt desc';
-        const where = all? '' :'where isPublished = 1 ';
-        const sql = `${this.selectStatement(this._columnNames.filter(colName => colName !== "content"))} ${where}${orderby}`;
-        const query = this.prepareQuery(sql);        
-        const rows = query.all([]);
-        const result = [] as Array<BlogPost>;
-        for(let i=0; i<rows.length; i++) {
-             result.push(this.rowToModel(rows[i]));
-        } 
-        return result;
+        const result = all ? this._collection.items : this._collection.where({isPublished: true}).items;
+
+        return (result as BlogPost[]).map(i => new BlogPost(i)).sort((a: BlogPost, b: BlogPost) => stringSortDesc(a.publishedAt, b.publishedAt));
     }
 
     public saveBlogPost(item: BlogPost) {
-        console.log(item);
-        if(item.id <= 0) {
-            const unsaved = this.getBlogPostBySlug(item.slug);
-            if(unsaved) {
-                console.log("found", unsaved.id);
-                item.id = unsaved.id;
+        //console.log(item);
+        let idx: number = (item as ILocallyDbDocument<BlogPost>).id !== undefined ? (item as ILocallyDbDocument<BlogPost>).id : -1;
+        console.log(idx);
+        
+        if(idx < 0) {
+            const unsaved = this.getBlogPostBySlug(item.slug) as ILocallyDbDocument<BlogPost>;
+            if(unsaved?.cid) {
+                idx = unsaved.cid;
             }
         }        
-        if(item.id > 0) {            
-            console.log("updating", item.slug);
-
-            const query = this.prepareQuery(this.updateStatement());
-            query.execute({
-                id: item.id,
-                slug: item.slug,
-                title: item.title,
-                subTitle: item.subTitle,
-                author: item.author,
-                isPublished: item.isPublished,
-                publishedAt: item.publishedAt,
-                snippet: item.snippet,
-                content: item.content,
-                category: item.category,
-                tags: item.tags
-            });
+        console.log(idx);
+        
+        if(idx >= 0) {    
+            console.log("updating")        
+            const result = this.update(idx, item);
+            idx = item.id;
         } else {
-             console.log("inserting", item.slug);
-             const query = this.prepareQuery(this.insertStatement());
-             query.execute({
-                slug: item.slug,
-                title: item.title,
-                subTitle: item.subTitle,
-                author: item.author,
-                isPublished: item.isPublished,
-                publishedAt: item.publishedAt,
-                snippet: item.snippet,
-                content: item.content,
-                category: item.category,
-                tags: item.tags
-              });
-              item.id = this.lastId();
+            console.log("inserting")        
+            idx = this.insert(item as ILocallyDbDocument<BlogPost>);
         }
-        console.log("saved", item.id);
-        return item.id;
-    }
-
-    protected rowToModel(row: Array<unknown>) {
-        return BlogPostFromRow(row)
-    }
-
-    
+        console.log("saved", idx);
+        return idx;
+    }    
 }
 
 export const blogService = new BlogService();

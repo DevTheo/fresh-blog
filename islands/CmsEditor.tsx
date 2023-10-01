@@ -14,6 +14,21 @@ export function CmsEditor({id, name, content}: CmsEditorProps) {
         const el = (event.target as HTMLInputElement | HTMLTextAreaElement);
         name.value = el.value;
     }
+    const deleteData = async () => {
+        const result = await fetch(window.location.href, {
+            method: "delete",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        if(result.status === 200) {
+            alert("Deleted");
+        } else {
+            console.error(result);
+            alert("Failed to delete");
+        }
+        window.location.href = "/admin";
+    }
 
     const saveData = async () => {
         const result = await fetch(window.location.href, {
@@ -34,7 +49,10 @@ export function CmsEditor({id, name, content}: CmsEditorProps) {
     return (<>
         <div class="row g-1">
             <div class="col col-sm-6">&nbsp;</div>
-            <div class="col"><button onClick={(e) => saveData()}>Save</button></div>
+            <div class="col">
+                <button onClick={(e) => saveData()}>Save</button>
+                <button onClick={() => { if(window.confirm("Are you sure you want to delete this content?")) deleteData()} }>Delete</button>
+            </div>            
         </div>
         <div class="row g-1">
             <div class="col col-sm-2">Name: </div>

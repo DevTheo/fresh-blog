@@ -7,22 +7,6 @@ export const BlogPostColumnsNames = ["id", "slug",        "title", "subTitle", "
 
 export type BlogPostColumnTypes = [number, string, string, string,     string,    string,        string,        string,    string,    string,     string];
 
-export function BlogPostFromRow(row: Array<unknown>): BlogPost {
-    const result = new BlogPost();
-    result.id = row[0] as number;
-    result.slug = row[1] as string;
-    result.title  = row[2] as string;
-    result.subTitle = row[3] as string;
-    result.author = row[4] as string;
-    result.isPublished = (row[5] as number) === 1;
-    result.publishedAt = row[6] as string;
-    result.content = row[7] as string;
-    result.snippet = row[8] as string;
-    result.category = row[9] as string;
-    result.tags = row[10] as string;
-    return result;
-}
-
 //@Model(TableName)
 export class BlogPost extends BaseBlogModel {
     slug!: string;
@@ -46,18 +30,19 @@ export class BlogPost extends BaseBlogModel {
     constructor(row?: any) {
         super();
         
-        this.id= row?.id;
-        this.slug= row?.slug;
-        this.title= row?.title;
-        this.subTitle= row?.subTitle;
-        this.author= row?.author;
-        this.isPublished= row?.isPublished;
-        this.publishedAt= row?.publishedAt;                
-        this.content= row?.content;
-        this.snippet= row?.snippet;
-        this.tags= row?.tags;
-        this.category= row?.category;
-        
+        if(row) {
+            this.id= row?.cid !== undefined ? row?.cid : row?.id;
+            this.slug= row?.slug;
+            this.title= row?.title;
+            this.subTitle= row?.subTitle;
+            this.author= row?.author;
+            this.isPublished= row?.isPublished;
+            this.publishedAt= row?.publishedAt;                
+            this.content= row?.content;
+            this.snippet= row?.snippet;
+            this.tags= row?.tags;
+            this.category= row?.category;
+        }        
     }
 }
 

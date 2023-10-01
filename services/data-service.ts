@@ -1,112 +1,32 @@
 // deno-lint-ignore-file no-explicit-any
 import { BaseBlogModel } from "../models/base.ts";
-import {DB, SqliteOptions} from "sqlite";
-//import * as Path from "$std/path/mod.ts";
-
-// export interface ICottonConnectionConfig {
-//     type: "mysql" | "postgres" | "sqlite"; 
-//     models: ObjectType<BaseModel>[];
-// }
-
-export type CottonDatabaseValues =
-  | string
-  | number
-  | Date
-  | boolean
-  | null
-  | undefined;
-
-  export interface CottonDatabaseResult {
-    [key: string]: CottonDatabaseValues;
-  }
-
-// export interface ICottonDb {
-//     lastInsertedId: number;
-//     query(
-//         query: string,
-//         values?: CottonDatabaseValues[],
-//       ): Promise<CottonDatabaseValues[]>;
-//     connect(): Promise<void>;
-//     disconnect(): Promise<void>;
-//     table(tableName: string): QueryBuilder;
-//     getManager(): Manager;
-//     transaction(fn: () => Promise<void>): Promise<void>;
-// }
+import locallydb from "locallydb";
+import { ILocallyDb,ILocallyDbCollection,ILocallyDbDocument } from "./locallydb-types.ts";
 
 const connectionInfo = JSON.parse(Deno.readTextFileSync("ormconfig.json"));
 
+export const stringSortDesc = (a?: string, b?: string) =>
+            (a || "") > (b || "") ? -1 : 
+            (a || "") === (b || "") ? 0 :1; 
+
+export const stringSortAsc = (a?: string, b?: string) =>
+            (a || "") > (b || "") ? -1 : 
+            (a || "") === (b || "") ? 0 :1; 
+
 export interface IDataService<T> {
     getById(id: number): T | null;
-    // countAsync(query?: Query): Promise<number>;
-}
-
-export const DbTypes = {
-    Sqlite: "sqlite",
-    Postgres: "postgres",
-    MySql: "mysql",
 }
 
 export type DataServiceProps = {
     isReadOnly: boolean,
     tableName: string,
-    //model: ObjectType<BaseModel>
     columnNames: string[],
-
 }
-
-// export abstract class DataServiceOld<T extends BaseBlogModel> implements IDataService<T> {
-//     private isReadOnly = false;
-//     public _db?: ICottonDb;
-//     private _tableName: string;
-//     private _model: ObjectType<BaseModel>;
-    
-//     private isReady = false;
-//     public getIsReady() {
-//         return this.isReady;
-//     }
-//     private setIsReady(isReady: boolean) {
-//         this.isReady = isReady;
-//     }
-
-//     private _manager: Manager | null = null;
-//     public get manager(): Manager | null {
-//         return this._manager;
-//     }
-    
-//     constructor({
-//         isReadOnly,
-//         tableName,
-//         model
-//     } : DataServiceProps) {
-//         this.isReadOnly = isReadOnly;
-//         this._tableName = tableName;
-//         this._model = model;
-
-//         const _connectionInfo = {...connectionInfo, models: [model]} as ICottonConnectionConfig;
-
-//         connect(_connectionInfo).then((db: any) =>{
-//                 this._db = db as ICottonDb;
-//                 this._manager = db.getManager();
-//                 this.setIsReady(true);
-                
-//             }).catch((err: any) =>{
-//                 console.log(`Cannot connect to ${connectionInfo.database}: `, err);
-//                 throw err;
-//             });
-//     }
-    
-//     public abstract newQuery(): ModelQuery<T>;
-
-//     public async getByIdAsync(id: number) {
-//         const q = this.newQuery();
-//         console.log(q);
-//         return await q.where("id", id).first();
-//     }
-// }
 
 export abstract class DataService<T extends BaseBlogModel> implements IDataService<T> {
     private isReadOnly = false;
-    public _db: DB;
+    public _db: ILocallyDb;
+    public _collection: ILocallyDbCollection<T>;
     private _tableName: string;
     private isReady = false;
     public getIsReady() {
@@ -124,64 +44,42 @@ export abstract class DataService<T extends BaseBlogModel> implements IDataServi
         this.isReadOnly = isReadOnly;
         this._tableName = tableName;
 
-        this._db = isReadOnly ?  
-            new DB(connectionInfo.database):
-            new DB(connectionInfo.database, {mode: "read"});
-
+        this._db = new locallydb(connectionInfo.database, !this.isReadOnly);
+        this._collection = this._db.collection(this._tableName) 
         this.setIsReady(true);
         this._columnNames = columnNames;
     }
 
     protected lastId(): number {
-        return this._db.lastInsertRowId;
+        return this._collection.header.lcid;
     }
 
-    public selectStatement(fieldList?: string[]) {
-        fieldList = fieldList || this._columnNames;
-        return `SELECT ${this._columnNames.join(",")} from ${this._tableName} `;
+    public insert(obj: T) {
+        const arr = this._collection.insert(obj);
+        return arr[0];
     }
 
-    public updateStatement(fieldList?: string[]) {
-        fieldList = fieldList || this._columnNames;
-        const setSection = fieldList.filter(columnName => 
-                columnName != "id").map(
-            (columnName) => `${columnName} = :${columnName}`)
-        return `UPDATE ${this._tableName} SET ${setSection.join(",")} where id = :id`;
+    public update(idx: number, obj: T) {
+        return this._collection.update(idx, obj);
     }
-
-    public insertStatement(fieldList?: string[]) {
-        fieldList = (fieldList || this._columnNames).filter(columnName => 
-            columnName != "id");
-        console.log(fieldList);
-        const qparms = fieldList.map(columnName => `:${columnName}`);
-        
-        return `INSERT INTO ${this._tableName} (${fieldList.join(",")}) values (${qparms.join(",")});`;
-    }
-
-    protected prepareQuery(sql: string) {
-        return this._db.prepareQuery(sql);
-    }
-
-    protected abstract rowToModel(row: Array<unknown>): T;
-
-    //public abstract newQuery(): ModelQuery<T>;
 
     public getById(id?: number) {
         if(id === undefined) {
             return null;
         }
-        const sql = `SELECT ${this._columnNames.join(",")} from ${this._tableName} where id = ?;`;
-        const query = this._db?.prepareQuery(sql);
-        const row = query?.one([id]);
-        if(row) {
-            return this.rowToModel(row)
+        if(id < this._collection.length()) {
+            return this.RowToEntity(this._collection.get(id));
         }
         return null;
     }
 
     public getAll() {
-        const query = this._db!.prepareQuery(this.selectStatement());
-        const rows = query.all();
-        return rows.map(i => this.rowToModel(i));
+        return this._collection.items.map(i => this.RowToEntity(i));        
     }
+
+    public delete(id: number) {
+        return this._collection.remove(id);
+    }
+
+    public abstract RowToEntity(i: any): T;
 }

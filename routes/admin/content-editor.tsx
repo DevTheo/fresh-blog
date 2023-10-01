@@ -71,9 +71,10 @@ export const handler: Handlers<PageData> = {
         const {name, returnPage} = loadUrlVars(req.url);
 
         const cmsEntry = new CmsItem();
-        cmsEntry.id = data.id || -1;
+        cmsEntry.id = data.id !== undefined ? data.id : -1;
         cmsEntry.name = data.name;
         cmsEntry.content = data.content;
+        console.log(cmsEntry);
 
         cmsEntry.id = cmsService.saveCmsItem(cmsEntry);
 
@@ -87,6 +88,40 @@ export const handler: Handlers<PageData> = {
             content: cmsEntry.content,
             message: "Content saved"
         });
+    },
+    DELETE(req, ctx) {
+      if(blogConfig.readOnly) {
+        const response = new Response("Cannot edit content in live environmnent", {
+            status: 500
+          });
+        return response;
+      }
+
+      const {name, returnPage} = loadUrlVars(req.url);
+      
+      if(!name) {
+        const response = new Response("name is required", {
+            status: 500
+          });
+        return response;
+      }
+      const cmsEntry = cmsService.getCmsItemByName(name);
+      if(cmsEntry?.id !== undefined && cmsEntry?.id >= 0) {
+        const result = cmsService.delete(cmsEntry.id);
+        if(!result) {
+          const response = new Response("unable to delete", {
+            status: 400
+        });
+      }
+      } else {
+        const response = new Response("unable to delete", {
+            status: 400
+        });
+      }
+      const response = new Response("true", {
+        status: 200
+      });
+      return response;
     }
   };
 
