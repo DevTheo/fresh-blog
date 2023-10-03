@@ -98,22 +98,17 @@ export function CkEditor({name, html, showSave, ckEditorConfig} : CkEditorProps)
     
     const doSave = (editor: any) => {
         html.value = editor.getData();
-        console.log("saved", html.value)
     }
 
     const config = useMemo(() => ckEditorConfig || getDefaultCkEditorConfig(html), [html, ckEditorConfig]);
 
     useEffect(() => {
         setTimeout(() => {
-            console.log("is setup?");
             if (!isSetup) {       
                 const editorCreator = getEditorCreator(selectedEditorType);
                 
-                console.log(editorCreator);
-
                 editorCreator.create( editorRef.current, config).then( (editor: any) => {
                     editor.model.document.on( 'change:data', (editorName: string, editorStyle: any, saveToId: any, content: any) => {
-                        console.log("data changed", editorName, editorStyle, saveToId, content);
                         doSave(editor);
                     })
                 }).catch( (error: any) => { 

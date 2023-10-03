@@ -74,7 +74,6 @@ export const handler: Handlers<PageData> = {
         cmsEntry.id = data.id !== undefined ? data.id : -1;
         cmsEntry.name = data.name;
         cmsEntry.content = data.content;
-        console.log(cmsEntry);
 
         cmsEntry.id = cmsService.saveCmsItem(cmsEntry);
 

@@ -38,7 +38,6 @@ export const handler: Handlers<PageData> = {
        let blogEntry: BlogPost | null = null;
        if(idValue !== undefined) {
             blogEntry = blogService.getById(idValue!);
-            console.log(blogEntry);
         }
        return ctx.render({id: idValue, blogEntry, message, errorMessage});
     },
@@ -58,7 +57,6 @@ export const handler: Handlers<PageData> = {
        }
        const buffer = await readAll(readerFromStreamReader(req.body!.getReader()));
        const savedBlogEntry = JSON.parse(decoder.decode(buffer)) as BlogPost;
-       console.log("savedBlogEntry", savedBlogEntry);
 
        if(isValid(savedBlogEntry))
        {

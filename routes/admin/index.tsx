@@ -11,6 +11,13 @@ export default function admin() {
     const [allBlogs] = useState<BlogPost[]>(blogService.getAll() || []);
     const [allCms] = useState<CmsItem[]>(cmsService.getAll() || []);
 
+    if(blogConfig.readOnly) {
+        return (<div class="col-lg-8 row g-3">
+            <h1>Admin</h1>
+            <div>Cannot edit content in the prod site</div>
+        </div>)
+    }
+
     return(<>
         <div class="col-lg-8 row g-3">
             <h2>Blog entries <a href="/admin/blog-editor?id=-1" className="btn btn-outline-primary btn-sm">New</a></h2>

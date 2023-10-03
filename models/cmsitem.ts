@@ -25,11 +25,9 @@ export class CmsItem extends BaseBlogModel {
     constructor(row?: any) {
         super();
         if(row) {
-            console.log(row);
             this.id= row?.cid !== undefined ? row?.cid : row?.id;
             this.name = row.name || "";
             this.content = row.content || "";
         }
-        console.log(this);
     }
 }

@@ -18,20 +18,16 @@ export class CmsService extends DataService<CmsItem> {
     }
     public saveCmsItem(item: CmsItem) {
         let idx: number = item.id !== undefined? item.id : -1;
-        console.log(idx);
         if(idx < 0) {
             const unsaved = this.getCmsItemByName(item.name) as ILocallyDbDocument<CmsItem>;
             if(unsaved?.cid) {
                 idx = unsaved.cid;
                 item.id = idx;
             }
-            console.log(idx);
         }        
         if(item.id >= 0) {
-            console.log("updating");
             this.update(idx, item as ILocallyDbDocument<CmsItem>);
         } else {
-            console.log("inserting");
             idx = this.insert(item as ILocallyDbDocument<CmsItem>);
         }
         return idx;

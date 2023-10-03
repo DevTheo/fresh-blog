@@ -23,9 +23,7 @@ export class BlogService extends DataService<BlogPost> {
     }
 
     public saveBlogPost(item: BlogPost) {
-        //console.log(item);
         let idx: number = (item as ILocallyDbDocument<BlogPost>).id !== undefined ? (item as ILocallyDbDocument<BlogPost>).id : -1;
-        console.log(idx);
         
         if(idx < 0) {
             const unsaved = this.getBlogPostBySlug(item.slug) as ILocallyDbDocument<BlogPost>;
@@ -33,17 +31,13 @@ export class BlogService extends DataService<BlogPost> {
                 idx = unsaved.cid;
             }
         }        
-        console.log(idx);
         
         if(idx >= 0) {    
-            console.log("updating")        
             const result = this.update(idx, item);
             idx = item.id;
         } else {
-            console.log("inserting")        
             idx = this.insert(item as ILocallyDbDocument<BlogPost>);
         }
-        console.log("saved", idx);
         return idx;
     }    
 }

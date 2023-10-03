@@ -10,6 +10,5 @@ import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 import { blogConfig } from "./blog-config.ts";
 
-await blogConfig.loadTheme();
-
+//blogConfig.loadTheme();
 await start(manifest);

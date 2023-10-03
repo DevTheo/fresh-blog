@@ -1,4 +1,4 @@
-import { ThemeCtl, ThemeHome, ThemeOtherPage } from "../theme-service.ts";
+import { ThemeCtl, ThemeHome, ThemeOtherPage } from "../theme-types.ts";
 import BlogPage from "./SbsCleanBlogPage.tsx";
 import HomePage from "./SbsCleanHomePage.tsx";
 import OtherPage from "./SbsCleanOtherPage.tsx";

@@ -5,7 +5,6 @@ export class LinkActionCellRenderer {
 
     // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
     init(params /*: ICellRendererParams*/) {
-        console.log("params", params)
         this.params = params; 
         this.eGui = document.createElement('A');
         this.eGui.className = 'btn btn-outline-primary btn-sm';

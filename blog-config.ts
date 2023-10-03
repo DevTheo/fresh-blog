@@ -1,15 +1,19 @@
-import { ThemeCtl, getThemes } from "./themes/theme-service.ts";
-
+import { getTheme, getThemes } from "./themes/theme-service.ts";
+import { ThemeCtl } from "./themes/theme-types.ts";
 
 const blogSettings = {
     author: "A Blogger",
     blogTitle: "My Blog",
-    themeName: "sbs-blog",
+    themeName: "sbs-clean",
     additionalScriptsToLoad: [
     ]
 }
 
 export class BlogConfig {
+    constructor() {
+        this.loadTheme();
+    }
+
     //#region readOnly
     private _readOnly = true;
     public get readOnly() : boolean {       
@@ -37,14 +41,9 @@ export class BlogConfig {
         return this._theme;
     }
 
-    public async loadTheme() {
-        if(this._theme === null) {
-            const themes = await getThemes();
-            const theme = themes.find(t => t.themeName === blogSettings.themeName);
-            this._theme = theme?.themeCtl ?? themes[0].themeCtl;
-        }
-
-        return this._theme;
+    public loadTheme() {
+        const theme = getTheme(blogSettings.themeName);
+        this._theme = theme?.themeCtl;
     }
     //#endregion
 
